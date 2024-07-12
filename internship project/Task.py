@@ -1,11 +1,11 @@
 import smtplib
-import requests
-from bs4 import BeautifulSoup
+from googlesearch import search
 from geopy.geocoders import Nominatim
 from gtts import gTTS
 import pyttsx3
 import pyautogui
 import time
+import os
 
 # Function to send an email
 def send_email():
@@ -26,10 +26,9 @@ def send_email():
 def send_sms():
     # This example uses the Twilio API
     from twilio.rest import Client
-    # add your account sid and authentication token
 
-    account_sid = "account_sid"
-    auth_token = "auth_token"
+    account_sid = "your_account_sid"
+    auth_token = "your_auth_token"
     client = Client(account_sid, auth_token)
 
     to_phone_number = input("Enter the receiver's phone number: ")
@@ -46,19 +45,17 @@ def send_sms():
 # Function to scrape top 5 search results from Google
 def google_scrape():
     query = input("Enter the search query: ")
-    response = requests.get(f"https://www.google.com/search?q={query}")
-    soup = BeautifulSoup(response.text, "html.parser")
-
     results = []
-    for g in soup.find_all('div', class_='BVG0Nb'):
-        title = g.find('h3').text
-        link = g.find('a')['href']
-        results.append((title, link))
-        if len(results) == 5:
-            break
+
+    try:
+        for result in search(query, num_results=5):
+            results.append(result)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return
 
     for i, result in enumerate(results, start=1):
-        print(f"{i}. {result[0]} - {result[1]}")
+        print(f"{i}. {result}")
 
 # Function to find current geo coordinates and location
 def find_geo_coordinates():
@@ -85,7 +82,6 @@ def send_sms_from_mobile():
     # Assuming you are using Android and have ADB installed
     phone_number = input("Enter the receiver's phone number: ")
     message = input("Enter the message: ")
-    import os
     os.system(f'adb shell am start -a android.intent.action.SENDTO -d sms:{phone_number} --es sms_body "{message}" --ez exit_on_sent true')
     os.system('adb shell input keyevent 22')
     os.system('adb shell input keyevent 66')
