@@ -26,9 +26,10 @@ def send_email():
 def send_sms():
     # This example uses the Twilio API
     from twilio.rest import Client
+    # add your account sid and authentication token
 
-    account_sid = "your_account_sid"
-    auth_token = "your_auth_token"
+    account_sid = "account_sid"
+    auth_token = "auth_token"
     client = Client(account_sid, auth_token)
 
     to_phone_number = input("Enter the receiver's phone number: ")
